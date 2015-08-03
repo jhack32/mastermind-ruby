@@ -86,16 +86,16 @@ class Human
     i = 1
     while i < 12
       4.times { @guesses << humanguesses = gets.chomp.downcase }
-      puts "#{@answer}"
       puts "#{@guesses}"
-      if @guesses != @answer
+      if @guesses != Computer.get_answer
         guess_again
         i += 1
         puts "Turn #: #{i}"
         puts ""
-      elsif @guesses == @answer
+      elsif @guesses == Computer.get_answer
         puts "You WIN! You guessed it correctly!"
-        puts "The answer: #{@answer} is the same as yours #{@guesses}"
+        puts "The answer: " + Computer.get_answer.to_s
+        puts "Your guess: #{@guesses}"
       end
     end
   end #End of guess
@@ -116,8 +116,14 @@ class Computer
   end
 
   def create_code
-    @answer = COLORS.sample(4)
-    puts "#{@answer}"
+    @@answer = COLORS.sample(4)
+    puts "#{@@answer}"
+  end
+
+#I did this so i wouldn't have to add Computer.new into my Human classes initialize.
+#This allows me to call Computer.get_answer and retrieve the @@answer array.
+  def self.get_answer
+    return @@answer
   end
 
   def make_guess
