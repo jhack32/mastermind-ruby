@@ -19,12 +19,12 @@ class Mastermind
     @human.humanname
     choose_mode
     if @choose_mode_input == "code breaker"
-      puts "Hello #{@human.name}."
-      puts "You have chosen to be the CODE BREAKER!"
+      system "clear" #This clears the screen
+      puts "\nHello #{@human.name}! You have chosen to be the CODE BREAKER!"
       code_breaker
     elsif @choose_mode_input == "code maker"
-      puts "Hello #{@human.name}."
-      puts "You have chosen to be the CODE MAKER!"
+      system "clear"
+      puts "\nHello #{@human.name}! You have chosen to be the CODE MAKER!"
       code_maker
     else
       puts "Hello #{@human.name}."
@@ -39,16 +39,20 @@ class Mastermind
     end #End of choose_mode
 
     def code_breaker
-      puts "Okay, code breaker. The computer will generate a random code that you will have to guess."
+      puts "The computer will generate a random code that you will have to guess."
       i = 1
       @computer.create_code
       if i < 12
-        puts "The colors you can choose from are "
+        puts "The colors you can choose from are: "
         puts  COLORS.to_s
-        puts "Please enter your 4-letter color guess: "
+        puts "Rules:"
+        puts "\nPlease enter your 4 color guesses: "
         puts "Please press enter after every color"
+        puts "\nYou will be given hints to which color you inputed is correct."
+        puts "The hint will tell you whether or not the colors you guessed are apart of the answer"
+        puts "BUT it does not mean that it is in the correct order!"
+        puts "The hints are in order, so your first input will be the first true/false \nreturned, etc."
         @human.guess
-        results
       end
     end #End of code_breaker
 
@@ -90,7 +94,7 @@ class Human
       if @guesses != Computer.get_answer
         guess_again
         i += 1
-        puts "Turn #: #{i}"
+        puts "\nTurn #: #{i}"
         puts ""
       elsif @guesses == Computer.get_answer
         puts "You WIN! You guessed it correctly!"
@@ -101,10 +105,14 @@ class Human
   end #End of guess
   def guess_again
     puts "Wrong! Guess again!"
-    puts "Your last guess was: #{@guesses}" #Displays the previous guess
+    puts "Previous Guess: #{@guesses}" #Displays the previous guess
+    hint
     @guesses = Array.new # Resets the array every time guessed wrong
   end
-
+  def hint
+    print "Hint: "
+    @guesses.any? { |x| print Computer.get_answer.include?(x).to_s + " " }
+  end
 end #End of Human class
 
 class Computer
