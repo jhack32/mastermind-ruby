@@ -40,9 +40,7 @@ class Mastermind
 
     def code_breaker
       puts "The computer will generate a random code that you will have to guess."
-      i = 1
       @computer.create_code
-      if i < 12
         puts "The colors you can choose from are: "
         puts  COLORS.to_s
         puts "Rules:"
@@ -52,8 +50,7 @@ class Mastermind
         puts "The hint will tell you whether or not the colors you guessed are apart of the answer"
         puts "BUT it does not mean that it is in the correct order!"
         puts "The hints are in order, so your first input will be the first true/false \nreturned, etc."
-        @human.guess
-      end
+      @human.guess
     end #End of code_breaker
 
     def code_maker
@@ -87,15 +84,15 @@ class Human
   end
 
   def guess
-    i = 1
-    while i < 12
+    @turns = 1
+    while @turns < 12
       4.times { @guesses << humanguesses = gets.chomp.downcase }
-      puts "#{@guesses}"
+      #puts "#{@guesses}" This puts your guess onto screen, but don't need
       if @guesses != Computer.get_answer
         guess_again
-        i += 1
-        puts "\nTurn #: #{i}"
-        puts ""
+        @turns += 1
+        puts "\nTurn #: #{@turns}\n"
+        better_hint
       elsif @guesses == Computer.get_answer
         puts "You WIN! You guessed it correctly!"
         puts "The answer: " + Computer.get_answer.to_s
@@ -103,13 +100,32 @@ class Human
       end
     end
   end #End of guess
+
+  #gives a better hint. if the user chooses to have the hint, they will lose one turn
+  #will give half of the answer. retrieves it from the Computer.get_partial_answer method
+  def better_hint
+    while @turns == 8
+      puts "Would you like a better hint? (yes/no)"
+      puts "This will cost you a turn!"
+      hint_two = gets.chomp.downcase
+      if hint_two == "yes"
+        Computer.get_partial_answer
+        @turns += 1
+      else
+        puts "Okay, you can continue to guess."
+        guess
+      end
+    end
+  end
+
   def guess_again
     puts "Wrong! Guess again!"
     puts "Previous Guess: #{@guesses}" #Displays the previous guess
     hint
     @guesses = Array.new # Resets the array every time guessed wrong
   end
-  def hint
+
+  def hint #Provides whether or not the color is correct in true/false values
     print "Hint: "
     @guesses.any? { |x| print Computer.get_answer.include?(x).to_s + " " }
   end
@@ -123,15 +139,19 @@ class Computer
     @human = Human.new
   end
 
-  def create_code
+  def create_code #Automatically chooses 4 colors from the COLORS constant.
     @@answer = COLORS.sample(4)
-    puts "#{@@answer}"
+    #puts "#{@@answer}" This puts the answer on screen.
   end
 
 #I did this so i wouldn't have to add Computer.new into my Human classes initialize.
 #This allows me to call Computer.get_answer and retrieve the @@answer array.
   def self.get_answer
     return @@answer
+  end
+
+  def self.get_partial_answer #Gives the hint. half the answer
+    puts "Here is part of the answer: " + @@answer[0] + " "  + @@answer[1]
   end
 
   def make_guess
